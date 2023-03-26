@@ -1,0 +1,5316 @@
+swagger: "2.0"
+info:
+  description: ""
+  version: "1.0.0"
+  title: "Hacker u Solutions Server"
+  termsOfService: "http://swagger.io/terms/"
+  contact:
+    email: "apiteam@swagger.io"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "cywapp.automation.cywar.xyz"
+basePath: "/api"
+tags:
+  - name: "Hacker u Solutions"
+    description: "Hack your way!"
+    externalDocs:
+      description: "Find out more"
+      url: "https://automation.cywar.hackeru.com/about"
+
+schemes:
+  - https
+
+produces:
+  - application/json
+
+consumes:
+  - application/json
+  - multipart/form-data
+  - image/png
+
+parameters:
+  xAccessTokenHeader:
+    name: Authorization
+    description: 'Token'
+    type: string
+    in: header
+    required: true
+
+paths:
+  '/umi/sign/in':
+    post:
+      tags:
+        - "login"
+      summary: "Login into hacker u solution system"
+      description: ""
+      operationId: "loginUser"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Login into the application and produce session token"
+          required: true
+          schema:
+            $ref: "#/definitions/loginBody"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/loginResponse"
+
+  '/logout':
+    post:
+      tags:
+        - "logout"
+      summary: "Logout from hacker u solution system"
+      description: "This action will log you out"
+      operationId: "logoutUser"
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+      responses:
+        "200":
+          description: "OK"
+
+  '/cms/certifications/create':
+    post:
+      tags:
+        - cmsCertification
+      summary: "Create certificate"
+      operationId: createCertificate
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            $ref: '#/definitions/createCertificationBody'
+      responses:
+        "201":
+          description: "Created"
+          schema:
+            $ref: "#/definitions/commonCertificationResponse"
+
+  '/cms/certifications/{certificationId}/assign':
+    post:
+      tags:
+        - cmsCertification
+      summary: "Attach certificate to class"
+      operationId: attachClassesToCertification
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - name: certificationId
+          in: path
+          description: ""
+          required: true
+          type: integer
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            $ref: '#/definitions/certificationAttachBody'
+      responses:
+        "201":
+          description: "Created"
+          schema:
+            $ref: "#/definitions/commonCertificationResponse"
+
+  '/cms/certifications/{resultsPerPage}/{pages}':
+    get:
+      tags:
+        - cmsCertification
+      summary: "get a list of all certifications"
+      operationId: getCertificationList
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - name: resultsPerPage
+          in: path
+          description: ""
+          required: true
+          type: integer
+        - name: pages
+          in: path
+          description: ""
+          required: true
+          type: integer
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/certificationListResponse"
+
+  '/cms/certifications/{certificationId}':
+    get:
+      tags:
+        - cmsCertification
+      summary: "Get certification info"
+      operationId: getCertificationInfo
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - name: certificationId
+          in: path
+          description: ""
+          required: true
+          type: integer
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/certificationItemResponse"
+
+    post:
+      tags:
+        - cmsCertification
+      summary: "assign challenges to certificate"
+      operationId: attachChallengesToCertification
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - name: certificationId
+          in: path
+          description: ""
+          required: true
+          type: integer
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            $ref: '#/definitions/certificationAttachChallengesBodyRequest'
+      responses:
+        "201":
+          description: "Created"
+          schema:
+            $ref: "#/definitions/certificationAttachResponse"
+
+  '/cms/certifications/{certificationId}/update-status':
+    post:
+      tags:
+        - cmsCertification
+      summary: "change certificate status"
+      operationId: changeCertificationStatus
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - name: certificationId
+          in: path
+          description: ""
+          required: true
+          type: integer
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            $ref: '#/definitions/certificationStatusRequest'
+      responses:
+        "200":
+          description: "Status Changed"
+          schema:
+            $ref: "#/definitions/commonCertificationResponse"
+
+  '/support':
+    get:
+      tags:
+        - support
+      summary: "Get support"
+      operationId: getSupportTicket
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: '#/definitions/supportResponse'
+    post:
+      tags:
+        - support
+      summary: "Send support ticket"
+      operationId: sendSupportTicket
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            $ref: '#/definitions/supportBody'
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            type: string
+            example: "Support Created Successfully"
+
+  '/signup':
+    post:
+      tags:
+        - signUpNewUser
+      summary: "Sign up new user"
+      operationId: signUp
+      parameters:
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            $ref: '#/definitions/signUpBodyRequest'
+      responses:
+        "200":
+          description: "OK"
+
+  '/forgot-password':
+    post:
+      tags:
+        - signUpNewUser
+      summary: "Generate new password for the forgotten one"
+      operationId: forgotPassword
+      parameters:
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            $ref: '#/definitions/forgotPasswordPayload'
+      responses:
+        "200":
+          description: "OK"
+
+  '/crang-version':
+    get:
+      tags:
+        - versions
+      summary: "get cywapp version"
+      operationId: getCrangVersion
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            type: string
+            example: "crang-1.21.1.3"
+
+  '/version':
+    get:
+      tags:
+        - versions
+      summary: "get cywapp version"
+      operationId: getCywappVersion
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/cywappResponse"
+
+  '/user':
+    get:
+      tags:
+        - profile
+      summary: "Get profile data"
+      operationId: getUserProfile
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: '#/definitions/profileResponseBody'
+
+  '/user/virtual-class':
+    get:
+      tags:
+        - profile
+      summary: "Get user virtual class"
+      operationId: getUserVirtualClass
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            type: object
+            properties:
+              {}
+    post:
+      tags:
+        - profile
+      summary: "Update user profile data"
+      operationId: updateUserProfile
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            $ref: '#/definitions/userEditData'
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            type: string
+            example: "User updated successfully"
+
+  '/user/eula-sign':
+    post:
+      tags:
+        - profile
+      summary: "Update eula sign"
+      operationId: readEulaSign
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            $ref: '#/definitions/userEditData'
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            type: string
+            example: "EULA signature date was updated"
+
+  '/user/refresh':
+    post:
+      tags:
+        - profile
+      summary: "Refresh user token"
+      operationId: refreshUserToken
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            $ref: '#/definitions/userEditData'
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/refreshUserTokenResponse"
+
+  '/user/edit':
+    get:
+      tags:
+        - profile
+      summary: "Edit user profile?"
+      operationId: editUserProfile
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/profileEditResponseBody"
+
+  '/user/challenges':
+    get:
+      tags:
+        - profile
+      summary: "Get user challenges"
+      operationId: getUserChallenges
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: '#/definitions/finished'
+
+  '/practice-arena/user-history':
+    get:
+      tags:
+        - profile
+      summary: "Get user practie arena history"
+      operationId: getUserPracticeArenaHistory
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: '#/definitions/paDetails'
+
+  '/user/details':
+    get:
+      tags:
+        - profile
+      summary: "Get user details"
+      operationId: getUserDetails
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: '#/definitions/profileResponseBody'
+
+  '/cms/cyberpedia/categories/{resultsPerPage}':
+    get:
+      tags:
+        - cmsCyberpedia
+      summary: "Get cyberpedia categories list"
+      operationId: getCyberpediaCategoriesList
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - name: resultsPerPage
+          in: path
+          description: ""
+          required: true
+          type: integer
+        - name: page
+          in: query
+          type: integer
+        - name: status
+          in: query
+          type: string
+        - name: sortBy
+          in: query
+          type: string
+        - name: sordOrder
+          in: query
+          type: boolean
+        - name: searchValue
+          in: query
+          type: string
+        - name: searchBy
+          in: query
+          type: string
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/getTableWithUUIDResponse"
+
+  '/cyberpedia/quiz/popular':
+    get:
+      tags:
+        - cmsCyberpedia
+      summary: "Get popular quizzes"
+      operationId: getCyberpediaPopularQuiz
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: '#/definitions/popularQuizResponse'
+
+  '/cyberpedia/terms/{categoryId}/{validTermId}':
+    get:
+      tags:
+        - cmsCyberpedia
+      summary: "get valid term inside category"
+      operationId: getValidTerm
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - name: categoryId
+          in: path
+          description: "Category valid id"
+          required: true
+          type: integer
+        - name: validTermId
+          in: path
+          description: "Term valid id"
+          required: true
+          type: integer
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: '#/definitions/term'
+
+  '/cms/cyberpedia/categories':
+    post:
+      tags:
+        - cmsCyberpedia
+      summary: "create new cyberpedia category"
+      operationId: createCyberpediaCategory
+      consumes:
+        - multipart/form-data
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - in: formData
+          name: file
+          type: file
+        - in: formData
+          name: name
+          type: string
+        - in: formData
+          name: description
+          type: string
+        - in: formData
+          name: status
+          type: integer
+      responses:
+        "201":
+          description: "Category Created Successfully"
+          schema:
+            type: string
+
+  '/cms/cyberpedia/categories/update':
+    post:
+      tags:
+        - cmsCyberpedia
+      summary: "update existed cyberpedia category"
+      operationId: editPediaCategoryStatusMode
+      consumes:
+        - multipart/form-data
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - in: formData
+          name: name
+          type: string
+        - in: formData
+          name: id
+          type: string
+        - in: formData
+          name: description
+          type: string
+        - in: formData
+          name: status
+          type: integer
+        - in: formData
+          name: statusModeManual
+          type: integer
+      responses:
+        "200":
+          description: "Category Updated Successfully"
+          schema:
+            type: string
+
+  '/cms/cyberpedia/quizzes/get-all/{resultsPerPage}':
+    get:
+      tags:
+        - cmsCyberpedia
+      summary: "get quizzes list"
+      operationId: getQuizzesList
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - name: resultsPerPage
+          in: path
+          description: ""
+          required: true
+          type: integer
+        - name: page
+          in: query
+          type: integer
+        - name: status
+          in: query
+          type: string
+        - name: sortBy
+          in: query
+          type: string
+        - name: sordOrder
+          in: query
+          type: boolean
+        - name: searchValue
+          in: query
+          type: string
+        - name: searchBy
+          in: query
+          type: string
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/getQuizTableResponse"
+
+  '/cms/cyberpedia/quizzes/create':
+    post:
+      tags:
+        - cmsCyberpedia
+      summary: "create new quiz"
+      operationId: createCyberpediaQuiz
+      consumes:
+        - multipart/form-data
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - in: formData
+          name: name
+          type: string
+        - in: formData
+          name: description
+          type: string
+        - in: formData
+          name: status
+          type: integer
+        - in: formData
+          name: category_id
+          type: string
+        - in: formData
+          name: level
+          type: integer
+        - in: formData
+          name: image
+          type: file
+        - in: formData
+          name: questions[0][content]
+          type: string
+        - in: formData
+          name: questions[0][answers][0][content]
+          type: string
+        - in: formData
+          name: questions[0][answers][1][content]
+          type: string
+        - in: formData
+          name: questions[0][correct_answer]
+          type: string
+      responses:
+        "200":
+          description: "Quiz created"
+          schema:
+            type: string
+
+  '/cms/cyberpedia/terms':
+    post:
+      tags:
+        - cmsCyberpedia
+      summary: "create new cyberpedia term"
+      operationId: createCyberpediaTerm
+      consumes:
+        - multipart/form-data
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - in: formData
+          name: file
+          type: file
+        - in: formData
+          name: category_id
+          type: string
+        - in: formData
+          name: name
+          type: string
+        - in: formData
+          name: status
+          type: integer
+        - in: formData
+          name: content
+          type: string
+        - in: formData
+          name: link
+          type: string
+      responses:
+        "201":
+          description: "Term Created Successfully"
+
+  '/cms/cyberpedia/terms/status':
+    post:
+      tags:
+        - cmsCyberpedia
+      summary: "edit existing term"
+      operationId: editTermStatus
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - in: "body"
+          name: "body"
+          description: "Payload for changing specific term status"
+          required: true
+          schema:
+            $ref: "#/definitions/statusBodyNumberReq"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: '#/definitions/statusResponse'
+
+  '/cms/cyberpedia/quizzes/get-all/status':
+    post:
+      tags:
+        - cmsCyberpedia
+      summary: "edit existing quiz"
+      operationId: editQuizStatus
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - in: "body"
+          name: "body"
+          description: "Payload for changing specific quiz status"
+          required: true
+          schema:
+            $ref: "#/definitions/statusBodyNumberReq"
+      responses:
+        "200":
+          description: "Quiz status was updated."
+          schema:
+            type: string
+            example: "Quiz status was updated."
+
+  '/cms/cyberpedia/categories/status':
+    post:
+      tags:
+        - cmsCyberpedia
+      summary: "edit existing pedia category"
+      operationId: editPediaCategoryStatus
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - in: "body"
+          name: "body"
+          description: "Payload for changing specific pedia category status"
+          required: true
+          schema:
+            $ref: "#/definitions/statusBodyStringReq"
+      responses:
+        "200":
+          description: "Category Status Updated Successfully"
+          schema:
+            type: string
+            example: "Category Status Updated Successfully"
+
+  '/cms/cyberpedia/terms/{resultsPerPage}':
+    get:
+      tags:
+        - cmsCyberpedia
+      summary: "Get system terms"
+      operationId: getTermsList
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - name: resultsPerPage
+          in: path
+          description: ""
+          required: true
+          type: integer
+        - name: page
+          in: query
+          type: integer
+        - name: status
+          in: query
+          type: string
+        - name: sortBy
+          in: query
+          type: string
+        - name: sordOrder
+          in: query
+          type: boolean
+        - name: searchValue
+          in: query
+          type: string
+        - name: searchBy
+          in: query
+          type: string
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/getTableResponse"
+
+  '/cms/cyberpedia/terms/multiple':
+    post:
+      tags:
+        - cmsCyberpedia
+      summary: "Delete cyberpedia terms"
+      operationId: deleteCyberpediaTerm
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - in: "body"
+          name: "body"
+          description: "Payload for deleting specific/multiple classes"
+          required: true
+          schema:
+            $ref: "#/definitions/deletePediaAssetsData"
+      responses:
+        "200":
+          description: "Terms have been deleted successfully"
+
+  '/cms/cyberpedia/quizzes/get-all/multiple':
+    post:
+      tags:
+        - cmsCyberpedia
+      summary: "Delete cyberpedia quizzes"
+      operationId: deleteCyberpediaQuiz
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - in: "body"
+          name: "body"
+          description: "Payload for deleting specific/multiple classes"
+          required: true
+          schema:
+            $ref: "#/definitions/deletePediaAssetsData"
+      responses:
+        "200":
+          description: "1 quizzes was deleted successfully"
+
+  '/cms/cyberpedia/categories/multiple':
+    post:
+      tags:
+        - cmsCyberpedia
+      summary: "Delete cyberpedia category"
+      operationId: deleteCyberpediaCategory
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - in: "body"
+          name: "body"
+          description: "Payload for deleting specific/multiple classes"
+          required: true
+          schema:
+            $ref: "#/definitions/deleteCategoryPayLoad"
+      responses:
+        "200":
+          description: "Categories have been deleted successfully"
+
+  '/cms/challenges/categories/{resultsPerPage}':
+    get:
+      tags:
+        - cmsCategories
+      summary: "Get system categories"
+      operationId: getCategories
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - name: resultsPerPage
+          in: path
+          description: ""
+          required: true
+          type: integer
+        - name: page
+          in: query
+          type: integer
+        - name: status
+          in: query
+          type: string
+        - name: sortBy
+          in: query
+          type: string
+        - name: sordOrder
+          in: query
+          type: boolean
+        - name: searchValue
+          in: query
+          type: string
+        - name: searchBy
+          in: query
+          type: string
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/getTableWithUUIDResponse"
+
+  '/cms/challenges/categories/status':
+    post:
+      tags:
+        - cmsCategories
+      summary: "Change specific challenge status"
+      operationId: changeChallengeCategoryStatus
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - in: "body"
+          name: "body"
+          description: "Payload for changing specific challenge status"
+          required: true
+          schema:
+            $ref: "#/definitions/statusBodyStringReq"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/statusChallengeResponse"
+
+  '/cms/challenges/categories':
+    post:
+      tags:
+        - cmsCategories
+      summary: "Create new category"
+      operationId: createNewCategory
+      consumes:
+        - multipart/form-data
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - in: formData
+          name: file
+          type: file
+          required: true
+        - in: formData
+          name: name
+          type: string
+        - in: formData
+          name: description
+          type: string
+        - in: formData
+          name: slug
+          type: string
+        - in: formData
+          name: min_points
+          type: string
+        - in: formData
+          name: min_level
+          type: integer
+        - in: formData
+          name: status
+          type: integer
+      responses:
+        "201":
+          description: "Category Created Successfully"
+
+  '/cms/challenges/categories/update':
+    post:
+      tags:
+        - cmsCategories
+      summary: "Adjust category challenge status"
+      consumes:
+        - multipart/form-data
+      operationId: changeChallengeCategoryStatusMode
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - in: formData
+          name: name
+          type: string
+        - in: formData
+          name: id
+          type: string
+        - in: formData
+          name: description
+          type: string
+        - in: formData
+          name: status
+          type: integer
+        - in: formData
+          name: statusMode
+          type: integer
+        - in: formData
+          name: slug
+          type: string
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            type: string
+            example: "Category Updated Successfully"
+
+  '/syllabi':
+    get:
+      tags:
+        - cmsChallenges
+      summary: "Get detailed challenge list information"
+      operationId: getDetailedChallengesInfo
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - name: type
+          in: query
+          type: string
+        - name: all
+          in: query
+          type: boolean
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/detailedChallengesInfoResponse"
+
+  '/cms/challenges/get-all/{pageNumber}/{resultsPerPage}':
+    get:
+      tags:
+        - cmsChallenges
+      summary: "Get system list of available challenges"
+      operationId: getChallenges
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - name: pageNumber
+          in: path
+          description: "Pagination - page number"
+          required: true
+          type: integer
+        - name: resultsPerPage
+          in: path
+          description: ""
+          required: true
+          type: integer
+        - name: page
+          in: query
+          type: integer
+        - name: status
+          in: query
+          type: string
+        - name: sortBy
+          in: query
+          type: string
+        - name: sordOrder
+          in: query
+          type: boolean
+        - name: searchValue
+          in: query
+          type: string
+        - name: searchBy
+          in: query
+          type: string
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/getTableWithUUIDResponse"
+
+  '/cms/challenges/get-all/status':
+    post:
+      tags:
+        - cmsChallenges
+      summary: "Change specific challenge status"
+      operationId: changeChallengeStatus
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - in: "body"
+          name: "body"
+          description: "Payload for changing specific challenge status"
+          required: true
+          schema:
+            $ref: "#/definitions/statusBodyStringReq"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/statusResponse"
+
+  '/challenges/attempt/{challengeId}':
+    post:
+      tags:
+        - cmsChallenges
+      summary: "Get challenge Checker verificator"
+      operationId: challengeChecker
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - name: challengeId
+          in: path
+          description: ""
+          required: true
+          type: string
+        - name: name
+          in: query
+          type: string
+        - in: "body"
+          name: "body"
+          description: "payload for getting challenge answer fail/success"
+          required: true
+          schema:
+            $ref: "#/definitions/checkerPayload"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/checkerResponse"
+
+  '/cms/videos/create':
+    post:
+      tags:
+        - cmsContentManager
+      summary: "Upload new video"
+      consumes:
+        - multipart/form-data
+      operationId: uploadNewVideo
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - in: formData
+          name: preview_image
+          type: file
+          required: true
+        - in: formData
+          name: video
+          type: file
+          required: true
+        - in: formData
+          name: duration_seconds
+          type: integer
+        - in: formData
+          name: display_name
+          type: string
+        - in: formData
+          name: description
+          type: string
+      responses:
+        "201":
+          description: "Created"
+          schema:
+            $ref: "#/definitions/createVideoResponse"
+
+  '/cms/videos':
+    get:
+      tags:
+        - cmsContentManager
+      summary: "Get videos list"
+      operationId: cmsContentManagerVideosLst
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/videoListResponse"
+
+  '/cms/presentations':
+    get:
+      tags:
+        - cmsContentManager
+      summary: "Get presentations list"
+      operationId: cmsContentManagerPresentationsLst
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/presentationsListResponse"
+
+    post:
+      tags:
+        - cmsContentManager
+      summary: "Upload new presentation"
+      operationId: uploadPresentation
+      consumes:
+        - multipart/form-data
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - in: formData
+          name: preview_image
+          type: file
+          required: true
+        - in: formData
+          name: presentation
+          type: file
+          required: true
+        - in: formData
+          name: name
+          type: string
+        - in: formData
+          name: description
+          type: string
+        - in: formData
+          name: pdf_to_slider
+          type: string
+      responses:
+        "201":
+          description: "Created"
+          schema:
+            $ref: "#/definitions/presentationItemData"
+
+  '/cms/icons/upload':
+    post:
+      tags:
+        - cmsContentManager
+      summary: "Upload new icon"
+      operationId: uploadIcon
+      consumes:
+        - multipart/form-data
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - in: formData
+          name: file
+          type: file
+          description: "will accept only SVG files"
+          required: true
+      responses:
+        "200":
+          description: "OK"
+
+  '/cms/icons/delete':
+    post:
+      tags:
+        - cmsContentManager
+      summary: "Delete existed icon"
+      operationId: deleteIcon
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - in: "body"
+          name: "body"
+          description: "Delete icon in the system"
+          required: true
+          schema:
+            $ref: "#/definitions/iconRequestId"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            type: string
+            example: "Icon deleted successfully"
+
+  '/cms/icons/save':
+    post:
+      tags:
+        - cmsContentManager
+      summary: "finish upload icon to app"
+      operationId: saveIcon
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - in: "body"
+          name: "body"
+          description: "Create new user in the system"
+          required: true
+          schema:
+            $ref: "#/definitions/iconRequestBody"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: '#/definitions/skillListResponseWithUUID'
+
+  '/cms/icons':
+    get:
+      tags:
+        - cmsContentManager
+      summary: "get list of icons"
+      operationId: getIconList
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: '#/definitions/skillListResponseWithUUID'
+
+  '/cms/tags/{resultsPerPage}':
+    get:
+      tags:
+        - cmsContentManager
+      summary: "Get skill list"
+      operationId: cmsContentMangerSkillLst
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - name: resultsPerPage
+          in: path
+          description: ""
+          required: true
+          type: integer
+        - name: page
+          in: query
+          type: integer
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/skillListResponse"
+
+  '/cms/packageinstaller/get-lesson-desc':
+    post:
+      tags:
+        - cmsPracticeArena
+      summary: "Create new lesson"
+      operationId: getLessonDesc
+      consumes:
+        - multipart/form-data
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - in: formData
+          name: file
+          type: file
+      responses:
+        "200":
+          description: "OK"
+
+  '/cms/packageinstaller/install-lesson':
+    post:
+      tags:
+        - cmsPracticeArena
+      summary: "Create new lesson"
+      operationId: installLesson
+      consumes:
+        - multipart/form-data
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - in: formData
+          name: file
+          type: file
+      responses:
+        "201":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/lessonItemDataResponse"
+
+  '/cms/packageinstaller/finish-lesson':
+    post:
+      tags:
+        - cmsPracticeArena
+      summary: "Create new lesson"
+      operationId: finishLesson
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+      responses:
+        "200":
+          description: "OK"
+
+  '/cms/pav2/module':
+    post:
+      tags:
+        - cmsPracticeArena
+      summary: "Create new Module"
+      operationId: createNewModule
+      consumes:
+        - multipart/form-data
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - in: formData
+          name: name
+          type: string
+          required: true
+        - in: formData
+          name: status
+          type: integer
+        - in: formData
+          name: level
+          type: integer
+          required: true
+        - in: formData
+          name: classification
+          type: integer
+          required: true
+        - in: formData
+          name: description
+          type: string
+          required: true
+        - in: formData
+          name: icon
+          type: string
+          required: true
+        - in: formData
+          name: syllabi
+          type: array
+          items:
+            type: integer
+        - in: formData
+          name: institutions
+          type: array
+          items:
+            type: integer
+        - in: formData
+          name: skills[0][name]
+          type: string
+        - in: formData
+          name: skills[0][id]
+          type: string
+        - in: formData
+          name: skills[0][selected]
+          type: boolean
+        - in: formData
+          name: skills[0][type]
+          type: string
+        - in: formData
+          name: skills[1][name]
+          type: string
+        - in: formData
+          name: skills[1][id]
+          type: string
+        - in: formData
+          name: skills[1][selected]
+          type: boolean
+        - in: formData
+          name: skills[1][type]
+          type: string
+        - in: formData
+          name: lessons
+          type: array
+          items:
+            type: string
+        - in: formData
+          name: status_mode
+          type: integer
+      responses:
+        "201":
+          description: "Created"
+          schema:
+            $ref: "#/definitions/moduleItemData"
+
+  '/cms/pav2/module/delete/{moduleId}':
+    post:
+      tags:
+        - cmsPracticeArena
+      summary: "delete module by module id"
+      operationId: deleteModule
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - name: moduleId
+          in: path
+          description: "module id for deletion"
+          required: true
+          type: string
+      responses:
+        "200":
+          description: "OK"
+
+  '/cms/pav2/delete/{lessonId}':
+    post:
+      tags:
+        - cmsPracticeArena
+      summary: "delete lesson by lesson id"
+      operationId: deleteLesson
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - name: lessonId
+          in: path
+          description: "lesson id for deletion"
+          required: true
+          type: string
+      responses:
+        "200":
+          description: "OK"
+
+  '/cms/pav2/modules':
+    get:
+      tags:
+        - cmsPracticeArena
+      summary: "Get PAV2 modules"
+      operationId: getPAV2Modules
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/moduleListResponse"
+
+  '/cms/pav2/module/{moduleId}':
+    post:
+      tags:
+        - cmsPracticeArena
+      summary: "Change module status"
+      operationId: changeModuleStatus
+      consumes:
+        - multipart/form-data
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - name: moduleId
+          in: path
+          required: true
+          type: string
+        - in: formData
+          name: id
+          type: string
+          required: true
+        - in: formData
+          name: syllabus_id
+          type: integer
+          required: true
+        - in: formData
+          name: classification
+          type: integer
+          required: true
+        - in: formData
+          name: level
+          type: integer
+          required: true
+        - in: formData
+          name: name
+          type: string
+          required: true
+        - in: formData
+          name: description
+          type: string
+          required: true
+        - in: formData
+          name: slug
+          type: string
+          required: true
+        - in: formData
+          name: icon
+          type: string
+          required: true
+        - in: formData
+          name: order
+          type: integer
+          required: true
+        - in: formData
+          name: status
+          type: integer
+        - in: formData
+          name: created_at
+          type: string
+        - in: formData
+          name: updated_at
+          type: string
+        - in: formData
+          name: created_by
+          type: string
+        - in: formData
+          name: updated_by
+          type: string
+        - in: formData
+          name: status_mode
+          type: string
+          required: true
+        - in: formData
+          name: module_content[0][content_id] #lesson uuid
+          type: string
+          required: true
+        - in: formData
+          name: module_content[0][order]  #lesson order
+          type: integer
+          required: true
+        - in: formData
+          name: module_content[0][content_type_name] #lesson name
+          type: string
+          required: true
+        - in: formData
+          name: module_content[1][content_id] #achieved skill - id
+          type: string
+          required: true
+        - in: formData
+          name: module_content[1][order]      #achieved skill - order
+          type: string
+          required: true
+        - in: formData
+          name: module_content[1][content_type_name]  #achieved skill
+          type: string
+          required: true
+        - in: formData
+          name: module_content[2][content_id] #prerequisite skill - id
+          type: string
+          required: true
+        - in: formData
+          name: module_content[2][order]      #prerequisite skill - order
+          type: string
+          required: true
+        - in: formData
+          name: module_content[2][content_type_name]  #prerequisite skill
+          type: string
+          required: true
+        - in: formData
+          name: syllabi[0]
+          type: string
+        - in: formData
+          name: institutions
+          type: array
+          items:
+            type: integer
+        - in: formData
+          name: skills[0][name]
+          type: string
+        - in: formData
+          name: skills[0][id]
+          type: string
+        - in: formData
+          name: skills[0][selected]
+          type: boolean
+        - in: formData
+          name: skills[0][type]
+          type: string
+        - in: formData
+          name: skills[1][name]
+          type: string
+        - in: formData
+          name: skills[1][id]
+          type: string
+        - in: formData
+          name: skills[1][selected]
+          type: boolean
+        - in: formData
+          name: skills[1][type]
+          type: string
+        - in: formData
+          name: lessons[0]
+          type: string
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: '#/definitions/moduleItemData'
+
+  '/cms/pav2/from_lesson/lessons':
+    get:
+      tags:
+        - cmsPracticeArena
+      summary: "Get PAV2 lessons"
+      operationId: getPAV2Lessons
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/lessonListResponse"
+
+  '/cms/pav2/modules/{moduleId}':
+    get:
+      tags:
+        - cmsPracticeArena
+      summary: "Get specific module"
+      operationId: getSingleModuleData
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - name: moduleId
+          in: path
+          description: "module UUID"
+          required: true
+          type: string
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: '#/definitions/moduleItemDataResponse'
+
+  '/cms/pav2/{lessonId}':
+    get:
+      tags:
+        - cmsPracticeArena
+      summary: "Get specific lesson"
+      operationId: getSingleLessonData
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - name: lessonId
+          in: path
+          description: "lesson UUID"
+          required: true
+          type: string
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: '#/definitions/lessonItemDataResponse'
+
+  '/cms/pav2/labs':
+    get:
+      tags:
+        - cmsPracticeArena
+      summary: "Get PAV2 labs"
+      operationId: getPAV2Labs
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/labListResponse"
+
+  '/cms/pav2/edit/{lessonId}':
+    post:
+      tags:
+        - cmsPracticeArena
+      summary: "Edit lesson"
+      operationId: editLesson
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - name: lessonId
+          in: path
+          description: "lesson UUID"
+          required: true
+          type: string
+        - in: "body"
+          name: "body"
+          description: "Change virtual lab status"
+          required: true
+          schema:
+            $ref: "#/definitions/lessonItemDataRequest"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/lessonEditResponse"
+
+  '/cms/pav2/lab/{vlabUUID}':
+    get:
+      tags:
+        - cmsPracticeArena
+      summary: "Get specific lab"
+      operationId: getSpecificLab
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - name: vlabUUID
+          in: path
+          description: "virtual lab UUID"
+          required: true
+          type: string
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: '#/definitions/labDataResponse'
+
+  '/cms/pav2/lab/{vlabUUID}/status':
+    post:
+      tags:
+        - cmsPracticeArena
+      summary: "Change virtual lab status"
+      operationId: changeVLabStatus
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - name: vlabUUID
+          in: path
+          description: "virtual lab UUID"
+          required: true
+          type: string
+        - in: "body"
+          name: "body"
+          description: "Change virtual lab status"
+          required: true
+          schema:
+            $ref: "#/definitions/paStatus"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/statusResponse"
+
+  '/cms/students/{pageNumber}/{resultsPerPage}':
+    get:
+      tags:
+        - cmsStudents
+      summary: "Get system student users"
+      operationId: getStudents
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - name: pageNumber
+          in: path
+          description: "Pagination - page number"
+          required: true
+          type: integer
+        - name: resultsPerPage
+          in: path
+          description: ""
+          required: true
+          type: integer
+        - name: page
+          in: query
+          type: integer
+        - name: status
+          in: query
+          type: string
+        - name: sortBy
+          in: query
+          type: string
+        - name: sordOrder
+          in: query
+          type: boolean
+        - name: searchValue
+          in: query
+          type: string
+        - name: searchBy
+          in: query
+          type: string
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/getTableResponseUser"
+
+  '/cms/students/status':
+    post:
+      tags:
+        - cmsStudents
+      summary: "Set student status"
+      operationId: setStatus
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - in: "body"
+          name: "body"
+          description: "Set specific student user status"
+          required: true
+          schema:
+            $ref: "#/definitions/dataUsers"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            type: string
+            example: "User Status Updated Successfully"
+
+  '/cms/users/{pageNumber}/{resultsPerPage}':
+    get:
+      tags:
+        - cmsUsers
+      summary: "Get system users"
+      operationId: getUsers
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - name: pageNumber
+          in: path
+          description: "Pagination - page number"
+          required: true
+          type: integer
+        - name: resultsPerPage
+          in: path
+          description: ""
+          required: true
+          type: integer
+        - name: page
+          in: query
+          type: integer
+        - name: status
+          in: query
+          type: string
+        - name: sortBy
+          in: query
+          type: string
+        - name: sordOrder
+          in: query
+          type: boolean
+        - name: searchValue
+          in: query
+          type: string
+        - name: searchBy
+          in: query
+          type: string
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/getTableResponseUser"
+
+  '/cms/users/create':
+    post:
+      tags:
+        - cmsUsers
+      summary: "Create new user/s in the system"
+      operationId: createUser
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - in: "body"
+          name: "body"
+          description: "Create new user in the system"
+          required: true
+          schema:
+            $ref: "#/definitions/newUserPayload"
+      responses:
+        "201":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/userCreatedResponse"
+
+  '/cms/users/internal':
+    post:
+      tags:
+        - cmsUsers
+      summary: "Update user as internal/external user"
+      operationId: setInternalUser
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - in: "body"
+          name: "body"
+          description: "Payload for deleting specific user or users"
+          required: true
+          schema:
+            $ref: "#/definitions/internalUserBodyReq"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            type: string
+            example: "Internal user was created successfully"
+
+  '/cms/users/multiple':
+    post:
+      tags:
+        - cmsUsers
+      summary: "Delete user/s"
+      operationId: deleteUsers
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - in: "body"
+          name: "body"
+          description: "Payload for deleting specific user or users"
+          required: true
+          schema:
+            $ref: "#/definitions/deleteUserBody"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            type: string
+            example: "Students have been deleted successfully"
+
+  '/cms/institutions/institutions/{resultsPerPage}':
+    get:
+      tags:
+        - cmsInstitution
+      summary: "get institutions list"
+      operationId: getInstittutions
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - name: resultsPerPage
+          in: path
+          description: ""
+          required: true
+          type: integer
+        - name: page
+          in: query
+          type: integer
+        - name: status
+          in: query
+          type: integer
+        - name: sortBy
+          in: query
+          type: string
+        - name: sordOrder
+          in: query
+          type: boolean
+        - name: searchValue
+          in: query
+          type: string
+        - name: searchBy
+          in: query
+          type: string
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/getTableInstitutionsResponse"
+
+  '/cms/businesses/{resultsPerPage}':
+    get:
+      tags:
+        - cmsInstitution
+      summary: "get businesses list"
+      operationId: getBusinesses
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - name: resultsPerPage
+          in: path
+          description: ""
+          required: true
+          type: integer
+        - name: page
+          in: query
+          type: integer
+        - name: status
+          in: query
+          type: string
+        - name: sortBy
+          in: query
+          type: string
+        - name: sordOrder
+          in: query
+          type: boolean
+        - name: searchValue
+          in: query
+          type: string
+        - name: searchBy
+          in: query
+          type: string
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/getTableResponse"
+
+  '/cms/institutions/create':
+    post:
+      tags:
+        - cmsInstitution
+      summary: "create new institution"
+      operationId: cmsCreateInstitution
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - in: "body"
+          name: "body"
+          description: "Payload for creating specific institution"
+          required: true
+          schema:
+            $ref: "#/definitions/newInstitutionPayload"
+      responses:
+        "201":
+          description: "Institution Created Successfully"
+          schema:
+            $ref: "#/definitions/institutionCreatedResponse"
+
+  '/cms/institutions/all-with-syllabus':
+    get:
+      tags:
+        - cmsInstitution
+      summary: "get list of syllabi"
+      operationId: getSyllabiList
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/syllabiListResponse"
+
+  '/cms/institutions/delete':
+    post:
+      tags:
+        - cmsInstitution
+      summary: "delete institution with no colleges"
+      operationId: cmsDeleteInstitution
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - in: "body"
+          name: "body"
+          description: "Payload for deleting specific institution"
+          required: true
+          schema:
+            $ref: "#/definitions/deleteInstitutionEntityPayLoad"
+      responses:
+        "200":
+          description: "Institution Deleted Successfully"
+
+  '/cms/colleges/{resultsPerPage}':
+    get:
+      tags:
+        - cmsCollege
+      summary: "get colleges list"
+      operationId: getColleges
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - name: resultsPerPage
+          in: path
+          description: ""
+          required: true
+          type: integer
+        - name: page
+          in: query
+          type: integer
+        - name: status
+          in: query
+          type: integer
+        - name: sortBy
+          in: query
+          type: string
+        - name: sordOrder
+          in: query
+          type: boolean
+        - name: searchValue
+          in: query
+          type: string
+        - name: searchBy
+          in: query
+          type: string
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/getTableResponse"
+
+  '/cms/colleges/create':
+    post:
+      tags:
+        - cmsCollege
+      summary: "create new college"
+      operationId: cmsCreateCollege
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - in: "body"
+          name: "body"
+          description: "Payload for creating specific college"
+          required: true
+          schema:
+            $ref: "#/definitions/newCollegePayload"
+      responses:
+        "201":
+          description: "College Created Successfully"
+          schema:
+            $ref: "#/definitions/institutionTypeCreatedResponse"
+
+  '/cms/colleges/delete':
+    post:
+      tags:
+        - cmsCollege
+      summary: "delete college with no classes"
+      operationId: cmsDeleteCollege
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - in: "body"
+          name: "body"
+          description: "Payload for deleting specific college"
+          required: true
+          schema:
+            $ref: "#/definitions/deleteInstitutionEntityPayLoad"
+      responses:
+        "200":
+          description: "College Deleted Successfully"
+
+  '/cms/syllabi':
+    post:
+      tags:
+        - cmsSyllabi
+      summary: "create new syllabus"
+      operationId: createNewSyllabus
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - in: "body"
+          name: "body"
+          description: "Payload for attaching syllabi for new college"
+          required: true
+          schema:
+            $ref: "#/definitions/createSyllabusBodyPayload"
+      responses:
+        "200":
+          description: "OK"
+
+  '/cms/syllabi/college':
+    post:
+      tags:
+        - cmsSyllabi
+      summary: "attach syllabus to college (optional)"
+      operationId: cmsCollegeAttachSyllabus
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - in: "body"
+          name: "body"
+          description: "Payload for attaching syllabi for new college"
+          required: true
+          schema:
+            $ref: "#/definitions/syllabiAttachmentPayload"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/syllabusAssignedEntity"
+
+  '/cms/syllabi/class':
+    post:
+      tags:
+        - cmsSyllabi
+      summary: "attach syllabus to class"
+      operationId: cmsClassAttachSyllabus
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - in: "body"
+          name: "body"
+          description: "Payload for attaching syllabi for new college"
+          required: true
+          schema:
+            $ref: "#/definitions/syllabiAttachmentPayload"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/syllabusAssignedEntity"
+
+  '/cms/syllabi/delete/{syllabusId}':
+    post:
+      tags:
+        - cmsSyllabi
+      summary: "delete syllabus by id"
+      operationId: deleteSyllabusById
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - name: syllabusId
+          in: path
+          description: ""
+          required: true
+          type: integer
+      responses:
+        "200":
+          description: "Syllabus has deleted successfully"
+
+  '/cms/classes/{resultsPerPage}':
+    get:
+      tags:
+        - cmsClasses
+      summary: "get classes list"
+      operationId: getClasses
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - name: resultsPerPage
+          in: path
+          description: ""
+          required: true
+          type: integer
+        - name: page
+          in: query
+          type: integer
+        - name: status
+          in: query
+          type: integer
+        - name: sortBy
+          in: query
+          type: string
+        - name: sordOrder
+          in: query
+          type: boolean
+        - name: searchValue
+          in: query
+          type: string
+        - name: searchBy
+          in: query
+          type: string
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            $ref: "#/definitions/getTableClassResponse"
+
+  '/cms/classes/create':
+    post:
+      tags:
+        - cmsClasses
+      summary: "create new class"
+      operationId: cmsCreateClass
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - in: "body"
+          name: "body"
+          description: "Payload for attaching syllabi for new class"
+          required: true
+          schema:
+            $ref: "#/definitions/newClassPayload"
+      responses:
+        "201":
+          description: "Class Created Successfully"
+          schema:
+            $ref: "#/definitions/institutionTypeCreatedResponse"
+
+  '/cms/classes/multiple':
+    post:
+      tags:
+        - cmsClasses
+      summary: "delete college with no classes"
+      operationId: cmsDeleteClass
+      parameters:
+        - $ref: '#/parameters/xAccessTokenHeader'
+        - in: "body"
+          name: "body"
+          description: "Payload for deleting specific/multiple classes"
+          required: true
+          schema:
+            $ref: "#/definitions/deleteClassPayLoad"
+      responses:
+        "200":
+          description: "Class Deleted Successfully"
+
+definitions:
+
+  certificationStatusRequest:
+    properties:
+      status:
+        type: boolean
+        example: true
+
+  certificationItemResponse:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 2
+      name:
+        type: string
+        example: "TestAuto"
+      slug:
+        type: string
+        example: "testauto"
+      status:
+        type: integer
+        example: 1
+      expired_after:
+        type: integer
+        example: 1
+      description:
+        type: string
+        example: "Test Description"
+      created_by:
+        type: integer
+        example: 98
+      created_at:
+        type: string
+        example: "2022-12-25T14:53:27.000000Z"
+      updated_at:
+        type: string
+        example: "2022-12-26T08:43:25.000000Z"
+      classes:
+        type: array
+        items:
+          $ref: "#/definitions/certificationClassItem"
+      contents:
+        type: array
+        items:
+          $ref: "#/definitions/certificationContentItem"
+
+  certificationContentItem:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 4
+      certification_id:
+        type: integer
+        example: 2
+      content_id:
+        type: string
+        example: "2348b527-c770-4e8c-b179-fd2865e5c543"
+      content_type_id:
+        type: integer
+        example: 1
+      status:
+        type: integer
+        example: 1
+      maxium_retries:
+        type: integer
+        example: 3
+      created_at:
+        type: string
+        example: "2022-12-25T14:53:27.000000Z"
+      updated_at:
+        type: string
+        example: "2022-12-26T08:43:25.000000Z"
+      challenge_content_info_with_category:
+        type: object
+        properties:
+          sequence:
+            type: integer
+          id:
+            type: string
+            example: "2348b527-c770-4e8c-b179-fd2865e5c543"
+          category_id:
+            type: string
+            example: "368ec694-6538-4810-9d8e-770914577d48"
+          name:
+            type: string
+            example: "Breaking Hollywood"
+          slug:
+            type: string
+            example: "Breaking Hollywood"
+          display_name:
+            type: string
+            example: "Breaking Hollywood"
+          description:
+            type: string
+            example: "In this challenge, you are required to identify an accessible SSH service"
+          version:
+            type: string
+            example: "v2.0.0.6"
+          point_id:
+            type: integer
+            example: 2
+          comments:
+            type: string
+          notes:
+            type: string
+            example: "You were provided with the user and password 'corey:TcPZ2rrS!' to reconnect if needed."
+          max_players:
+            type: integer
+            example: 1
+          status:
+            type: integer
+            example: 1
+          fully_maintained_email_sent:
+            type: integer
+            example: 0
+          play_time:
+            type: integer
+            example: 60
+          story:
+            type: string
+            example: "A few days back, you had an argument with your friend Hernandez about password complexity."
+          objective:
+            type: string
+            example: "Create a custom wordlist to use against the accessible SSH service - Execute a brute-force attack against the SSH"
+          docker:
+            type: boolean
+            example: true
+          access_point:
+            type: string
+            example: null
+          title:
+            type: string
+            example: null
+          content_install_type:
+            type: string
+            example: "ecsEC2"
+          created_at:
+            type: string
+            example: "2022-12-25T14:53:27.000000Z"
+          updated_at:
+            type: string
+            example: "2022-12-26T08:43:25.000000Z"
+          created_by:
+            type: integer
+            example: 24818
+          updated_by:
+            type: integer
+            example: 24818
+          team_id:
+            type: integer
+            example: 2
+          category:
+            type: object
+            properties:
+              id:
+                type: string
+                example: "368ec694-6538-4810-9d8e-770914577d48"
+              name:
+                type: string
+                example: "Introductory"
+              slug:
+                type: string
+                example: "Introductory"
+
+  certificationClassItem:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 10
+      certification_id:
+        type: integer
+        example: 2
+      class_id:
+        type: integer
+        example: 7215
+      access:
+        type: integer
+        example: 0
+      invitation_sent:
+        type: integer
+        example: 0
+      content_duration:
+        type: integer
+        example: 48
+      start_at:
+        type: string
+        example: "2022-12-13 00:00:00"
+      end_at:
+        type: string
+        example: "2023-01-10 00:00:00"
+      created_at:
+        type: string
+        example: "2022-12-26T08:43:37.000000Z"
+      updated_at:
+        type: string
+        example: "2022-12-26T08:43:37.000000Z"
+      deleted_at:
+        type: string
+        example: null
+      class:
+        type: object
+        properties:
+          id:
+            type: integer
+            example: 7215
+          name:
+            type: string
+            example: "Automation_Class_5166253"
+          type:
+            type: integer
+            example: 2
+          college_id:
+            type: integer
+            example: 4225
+          lu_course_type:
+            type: integer
+            example: 1
+          status:
+            type: integer
+            example: 1
+          start_at:
+            type: string
+            example: "2022-12-26"
+          end_at:
+            type: string
+            example: "2022-12-27"
+          grace_period:
+            type: string
+            example: null
+          vc_status:
+            type: integer
+            example: null
+          virtual_class_id:
+            type: integer
+            example: null
+          template_id:
+            type: integer
+            example: null
+          notes:
+            type: string
+            example: null
+          created_at:
+            type: string
+            example: "2022-12-25 18:06:54"
+          updated_at:
+            type: string
+            example:  "2022-12-25 18:06:54"
+          created_by:
+            type: integer
+            example: 11
+          updated_by:
+            type: integer
+            example: 11
+          owner:
+            type: string
+          duplicate:
+            type: integer
+            example: 1
+          assign:
+            type: integer
+            example: 0
+          original_class:
+            type: integer
+            example: 0
+          college:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 4222
+              name:
+                type: string
+                example: "college_teacher_eNOa"
+              institution_id:
+                type: integer
+                example: 89
+              institution:
+                $ref: "#/definitions/certificationInstitutionItem"
+
+  certificationInstitutionItem:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 89
+      institution:
+        type: string
+        example: "inst_teacher_eNOa"
+
+  certificationAttachChallengesBodyRequest:
+    type: object
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      year:
+        type: integer
+      id:
+        type: integer
+      assignedChallenges:
+        type: array
+        items:
+          $ref: "#/definitions/certificationAssignedContent"
+
+  certificationAttachResponse:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      slug:
+        type: string
+      status:
+        type: integer
+      expired_after:
+        type: integer
+      description:
+        type: string
+      created_by:
+        type: string
+      created_at:
+        type: string
+      updated_at:
+        type: string
+      contents_count:
+        type: integer
+
+  certificationListResponse:
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "Certificate Name"
+        status:
+          type: integer
+          example: 0
+        expired_after:
+          type: integer
+        created_at:
+          type: string
+          example: "2022-12-25T14:53:27.000000Z"
+        created_by:
+          type: string
+          example: "Admin AdminhpWRN"
+        classes_count:
+          type: integer
+          example: 2
+        total_students_count:
+          type: integer
+          example: 0
+        contents_count:
+          type: integer
+          example: 4
+        passed_students_count:
+          type: integer
+          example: 0
+        certification_user_contents:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 17
+              user_certification_id:
+                type: integer
+                example: 1
+              certification_content_id:
+                type: integer
+                example: 3
+              attempts:
+                type: integer
+                example: 0
+              report_path:
+                type: string
+                example: null
+              status:
+                type: integer
+                example: -1
+              started_at:
+                type: string
+                example: null
+              duration:
+                type: integer
+                example: 48
+              finished_at:
+                type: string
+                example: null
+              created_at:
+                type: string
+                example: "2022-12-22T12:52:02.000000Z"
+              updated_at:
+                type: string
+                example: "2022-12-22T12:52:02.000000Z"
+              laravel_through_key:
+                type: integer
+                example: 1
+
+  certificationAttachBody:
+    type: object
+    properties:
+      classes_ids:
+        type: array
+        items:
+          type: integer
+          example: 7111, 7542
+      classes_detach_ids:
+        type: array
+        items:
+          type: integer
+          example: 7111, 7542
+      assigned_cert_contents:
+        type: array
+        items:
+          $ref: "#/definitions/certificationAssignedContent"
+      original_cert_contents:
+        type: array
+        items:
+          $ref: "#/definitions/certificationAssignedContent"
+
+  certificationAssignedContent:
+    type: object
+    properties:
+      name:
+        type: string
+        example: "Breaking Hollywood"
+      id:
+        type: string
+        example: "2348b527-c770-4e8c-b179-fd2865e5c543"
+      category:
+        type: string
+        example: "Introductory"
+      level:
+        type: integer
+        example: 2
+      slug:
+        type: string
+        example: "hack-n-seek"
+
+  createCertificationBody:
+    type: object
+    properties:
+      name:
+        type: string
+        example: "certificate name"
+      description:
+        type: string
+        example: "description name"
+      expired_after:
+        type: integer
+        example: 1
+      contents:
+        type: array
+        items:
+          type: string
+      status:
+        type: integer
+        example: 1
+
+  commonCertificationResponse:
+    type: object
+    properties:
+      status:
+        type: string
+        example: "success"
+      message:
+        type: string
+        example: "Certification created successfully"
+      data:
+        type: object
+        properties:
+          certification_id:
+            type: integer
+            example: 2
+      code:
+        type: string
+        example: "201"
+
+  detailedChallengesInfoResponse:
+    type: object
+    properties:
+      challenges:
+        type: array
+        items:
+          $ref: "#/definitions/challengeDetailedItem"
+      empty_categories:
+        type: array
+        items:
+          type: string
+
+  challengeDetailedItem:
+    type: object
+    properties:
+      hint_points:
+        type: integer
+      id:
+        type: string
+      challenge_name:
+        type: string
+      challenge_status:
+        type: integer
+      version:
+        type: string
+      category_id:
+        type: string
+      name:
+        type: string
+      story:
+        type: string
+      slug:
+        type: string
+      status:
+        type: integer
+      team_id:
+        type: integer
+      locked:
+        type: integer
+      points:
+        type: integer
+      points_name:
+        type: string
+      hint:
+        type: string
+      image:
+        type: string
+      category_name:
+        type: string
+      category_slug:
+        type: string
+      category_image:
+        type: string
+      category_status:
+        type: integer
+
+  moduleItemDataResponse:
+    type: object
+    properties:
+      classification:
+        type: integer
+      created_at:
+        type: string
+      created_by:
+        type: string
+      updated_at:
+        type: string
+      updated_by:
+        type: string
+        example: "Admin AdminIFZPr"
+      description:
+        type: string
+      icon:
+        type: string
+        example: "0af1935b-3b45-4471-aec9-648d77be80e9"
+      id:
+        type: string
+        example: "f4d3b4c8-9d2e-4973-93e9-6c1ead1f802c"
+      institutions:
+        type: array
+        items:
+          type: string
+      level:
+        type: integer
+      name:
+        type: string
+        example: "status_content_module_068335948"
+      order:
+        type: integer
+      slug:
+        type: string
+        example: "status-content-module-068335948"
+      status:
+        type: integer
+      status_mode:
+        type: integer
+      syllabus_id:
+        type: integer
+        example: 199
+      module_content:
+        type: array
+        items:
+          $ref: '#/definitions/moduleContentItem'
+      syllabi:
+        type: array
+        items:
+          type: integer
+          example: 200
+
+  moduleContentItem:
+    type: object
+    properties:
+      content_id:
+        type: integer
+      content_type_name:
+        type: string
+      order:
+        type: integer
+
+  checkerPayload:
+    type: object
+    properties:
+      inputs:
+        type: array
+        items:
+          $ref: '#/definitions/checkerItemPayload'
+
+  checkerResponse:
+    type: object
+    properties:
+      status:
+        type: string
+      content:
+        type: string
+      points:
+        type: integer
+      user_answers:
+        type: array
+        items:
+          type: string
+          example: "c9d43a699089e19dbf47bbf8b53df3f2"
+      hint_used:
+        type: boolean
+      number_of_correct_flags:
+        type: integer
+
+  checkerItemPayload:
+    type: object
+    properties:
+      id:
+        type: integer
+      challenge_id:
+        type: string
+      placeholder:
+        type: string
+      answer:
+        type: string
+
+  statusChallengeResponse:
+    type: object
+    properties:
+      code:
+        type: string
+        example: "200"
+      status:
+        type: string
+        example: "success"
+      message:
+        type: string
+        example: "Status has updated successfully"
+      data:
+        type: object
+        properties:
+          parents_affected:
+            type: array
+            items:
+              type: string
+
+  quizDataResponse:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 1
+      name:
+        type: string
+        example: "QuizName"
+      category_id:
+        type: string
+        format: uuid
+        example: "9be65471-62b7-4f52-a389-a177fbab2898"
+      description:
+        type: string
+        example: "quiz desc"
+      status:
+        type: integer
+        example: 2
+      level:
+        type: integer
+        example: 3
+      image:
+        type: string
+        example: "cyberpedia/quizzes/pic.jpg"
+      number_of_entries:
+        type: integer
+        example: 0
+      created_by:
+        type: string
+        example: "15"
+      created_at:
+        type: string
+        example: "2022-03-23 07:25:48"
+      updated_at:
+        type: string
+        example: "2022-03-23 07:25:48"
+      deleted_at:
+        type: string
+        example: null
+      success_quizzes_count:
+        type: integer
+        example: 0
+      quizzes_taken_count:
+        type: integer
+        example: 0
+      s3_image:
+        type: string
+        example: "http://huso-automation..."
+      sum_of_students_correct_answers:
+        type: number
+        example: 0
+      creator:
+        $ref: '#/definitions/creator'
+      category:
+        $ref: '#/definitions/category'
+      questions:
+        type: array
+        items:
+          $ref: '#/definitions/question'
+      user_solved_quiz:
+        type: string
+        example: null
+      points:
+        $ref: '#/definitions/points'
+      user_correct_answers:
+        $ref: '#/definitions/correctAnswers'
+
+  points:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 3
+      name:
+        type: string
+        example: "Hard"
+      points:
+        type: integer
+        example: 30
+      created_at:
+        type: string
+      updated_at:
+        type: string
+
+  internalUserBodyReq:
+    type: object
+    properties:
+      delete:
+        type: boolean
+      user_id:
+        type: integer
+        example: 112
+
+  labDataResponse:
+    type: object
+    properties:
+      lab:
+        $ref: '#/definitions/metaData'
+      lessons:
+        $ref: '#/definitions/lessonListResponse'
+
+  lessonEditResponse:
+    type: object
+    properties:
+      lesson_status:
+        type: integer
+        example: 1
+      msg:
+        type: string
+        example: "lesson updated"
+
+  paStatus:
+    type: object
+    properties:
+      status:
+        type: integer
+        example: 1
+
+  statusResponse:
+    type: object
+    properties:
+      status:
+        type: string
+        example: "success"
+      message:
+        type: string
+        example: "Waiting for the last users to complete the Challenge"
+      data:
+        $ref: '#/definitions/statusData'
+      code:
+        type: string
+        example: "200"
+
+  statusData:
+    type: object
+    properties:
+      parents_affected:
+        type: object
+        properties:
+          content_id:
+            type: string
+          content_type_id:
+            type: integer
+          created_at:
+            type: string
+          created_by:
+            type: integer
+          id:
+            type: integer
+          new_status:
+            type: integer
+          updated_at:
+            type: string
+          challenge_categories:
+            type: array
+            items:
+              type: string
+              example: "Scripting & Automation"
+          cyberpedia_categories:
+            type: array
+            items:
+              type: string
+              example: "Scripting & Automation"
+          lessons:
+            type: array
+            items:
+              type: string
+              example: "Active Lesson"
+          modules:
+            type: array
+            items:
+              type: string
+              example: "Assigned Module"
+
+  statusBodyStringReq:
+    type: object
+    properties:
+      id:
+        type: string
+        example: "ed8800e9-a3d7-43b6-8728-87b342b075df"
+      status:
+        type: integer
+        example: 3
+      model:
+        type: string
+        example: "Challenge"
+      statusModeManual:
+        type: boolean
+        example: false
+
+  statusBodyNumberReq:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 3
+      status:
+        type: integer
+        example: 3
+      model:
+        type: string
+        example: "Challenge"
+      statusModeManual:
+        type: boolean
+        example: false
+
+  iconRequestId:
+    type: object
+    properties:
+      id:
+        type: string
+        example: "8c103910-52db-42b4-a0d5-b83b910b1a75"
+
+  deletePediaAssetsData:
+    type: object
+    properties:
+      mode:
+        type: string
+        example: "Delete"
+      data:
+        type: array
+        items:
+          type: integer
+
+  deleteCategoryPayLoad:
+    type: object
+    properties:
+      mode:
+        type: string
+        example: "Delete"
+      data:
+        type: array
+        items:
+          type: string
+
+  iconRequestBody:
+    type: object
+    properties:
+      files_name:
+        type: array
+        items:
+          type: string
+
+  createVideoResponse:
+    type: object
+    properties:
+      status:
+        type: string
+        example: "success"
+      message:
+        type: string
+        example: "Created the video successfully"
+      code:
+        type: string
+        example: "201"
+      data:
+        $ref: '#/definitions/videoData'
+
+  videoData:
+    type: object
+    properties:
+      display_name:
+        type: string
+      description:
+        type: string
+      preview_image:
+        type: string
+      duration_seconds:
+        type: string
+      path:
+        type: string
+      id:
+        type: string
+      status:
+        type: integer
+      created_by:
+        type: string
+      updated_by:
+        type: string
+      created_at:
+        type: string
+
+  userCollegesRequest:
+    type: array
+    items:
+      $ref: '#/definitions/collegeItemData'
+
+  userClassesRequest:
+    type: array
+    items:
+      $ref: '#/definitions/classItemData'
+
+  collegeItemData:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 62
+      name:
+        type: string
+        example: "Automation_College_97376700"
+      institution_id:
+        type: integer
+        example: 78
+
+  classItemData:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 43
+      name:
+        type: string
+        example: "Automation_Class_97376700"
+      college_id:
+        type: integer
+        example: 62
+
+  syllabiListResponse:
+    type: array
+    items:
+      $ref: '#/definitions/syllabusItemList'
+
+  syllabusItemList:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 1
+      institution:
+        type: string
+        example: "HackrU Israel"
+      status:
+        type: integer
+      created_at:
+        type: string
+      updated_at:
+        type: string
+      created_by:
+        type: integer
+        example: 7
+      updated_by:
+        type: integer
+        example: 12028
+      image:
+        type: string
+        example: "institutations/2021-04-18 15:43:09-2020.09.01.09.31.30-27122.png"
+      icon:
+        type: string
+        example: "institutations/2021-04-18 15:43:09-2020.09.01.09.31.30-urn_aaid_sc_US_8544c430-bf9f-4bae-a759-9dea90ec6e9c (4).png"
+      s3_image:
+        type: string
+      s3_icon:
+        type: string
+      syllabi:
+        type: array
+        items:
+          $ref: '#/definitions/syllabiDescription'
+
+  syllabiDescription:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 1
+      name:
+        type: string
+        example: "yogev"
+      status:
+        type: integer
+        example: 1
+      order:
+        type: integer
+        example: 1
+      created_by:
+        type: integer
+        example: 4364
+      institute_id:
+        type: integer
+        example: 1
+      type_id:
+        type: integer
+        example: 1
+      created_at:
+        type: string
+        example: "2020-09-02 14:33:35"
+      updated_at:
+        type: string
+        example: "2021-02-18 13:56:49"
+
+  createSyllabusBodyPayload:
+    type: object
+    properties:
+      name:
+        type: string
+        example: "syllabus_name"
+      instituteName:
+        type: string
+        example: "Automation_Insti_5300"
+      institute_id:
+        type: string
+        example: "700"
+      challenges_categories:
+        type: array
+        items:
+          $ref: '#/definitions/challengeCategoryItem'
+      cyberpedia:
+        type: array
+        items:
+          $ref: '#/definitions/cyberpediaItem'
+      pav2_modules:
+        type: array
+        items:
+          $ref: '#/definitions/pav2Item'
+
+  pav2Item:
+    type: object
+    properties:
+      name:
+        type: string
+      id:
+        type: string
+      syllabus_id:
+        type: integer
+      lessons:
+        type: array
+        items:
+          $ref: '#/definitions/lessonItem'
+      picked:
+        type: boolean
+      institutions:
+        type: array
+        items:
+          $ref: '#/definitions/institutionItem'
+
+  institutionItem:
+    type: object
+    properties:
+      institution:
+        type: string
+      institution_id:
+        type: integer
+
+  lessonItem:
+    type: object
+    properties:
+      syllabus_id:
+        type: integer
+      content_type_id:
+        type: integer
+      content_id:
+        type: string
+      order:
+        type: integer
+      created_at:
+        type: string
+      created_by:
+        type: integer
+
+  cyberpediaItem:
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      description:
+        type: string
+      image:
+        type: string
+      status:
+        type: integer
+      created_at:
+        type: string
+      updated_at:
+        type: string
+      created_by:
+        type: integer
+      updated_by:
+        type: integer
+      status_mode:
+        type: integer
+      picked:
+        type: boolean
+
+  challengeItem:
+    type: object
+    properties:
+      hint_points:
+        type: integer
+      id:
+        type: string
+      challenge_status:
+        type: integer
+      version:
+        type: string
+      category_id:
+        type: string
+      name:
+        type: string
+      story:
+        type: string
+      slug:
+        type: string
+      status:
+        type: integer
+      team_id:
+        type: integer
+      locked:
+        type: integer
+      points:
+        type: integer
+      points_name:
+        type: string
+      hint:
+        type: string
+      image:
+        type: string
+      s3_image:
+        type: string
+      picked:
+        type: boolean
+
+
+  challengeCategoryItem:
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      description:
+        type: string
+      slug:
+        type: string
+      image:
+        type: string
+      status:
+        type: integer
+      orderby:
+        type: string
+      created_at:
+        type: string
+      updated_at:
+        type: string
+      created_by:
+        type: integer
+      updated_by:
+        type: integer
+      status_mode:
+        type: integer
+      s3_image:
+        type: string
+      challenges:
+        type: array
+        items:
+          $ref: '#/definitions/challengeItem'
+      picked:
+        type: boolean
+      total:
+        type: integer
+
+  deleteClassPayLoad:
+    type: object
+    properties:
+      mode:
+        type: string
+        example: "Delete"
+      data:
+        type: array
+        items:
+          type: integer
+          example: 270, 271, 272, 273, 274...
+
+  deleteInstitutionEntityPayLoad:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 749
+
+  newClassPayload:
+    type: object
+    properties:
+      status:
+        type: boolean
+        example: true
+      type:
+        type: integer
+        example: 2
+      start_at:
+        type: string
+        example: "2021-04-26"
+      end_at:
+        type: string
+        example: "2021-04-27"
+      institution:
+        type: integer
+        example: 1
+      college_id:
+        type: integer
+        example: 1
+      name:
+        type: string
+        example: "new_class_name"
+      grace_period:
+        type: string
+        example: null
+      lu_course_type:
+        type: integer
+        example: 1
+
+  syllabusAssignedEntity:
+    type: string
+    example: "Syllabuses asigned to entity"
+
+  syllabiAttachmentPayload:
+    type: object
+    properties:
+      syllabi:
+        type: array
+        items:
+          $ref: '#/definitions/syllabiItemData'
+      entity:
+        type: string
+      entity_id:
+        type: integer
+        example: 844
+
+  syllabiItemData:
+    type: object
+    properties:
+      name:
+        type: string
+        example: "syllabus name"
+      id:
+        type: integer
+        example: 1
+      picked:
+        type: boolean
+        example: true
+      default:
+        type: boolean
+        example: true
+
+  newCollegePayload:
+    type: object
+    properties:
+      status:
+        type: boolean
+        example: true
+      institution_id:
+        type: integer
+        example: 1332
+      name:
+        type: string
+        example: "college_api_name_new"
+
+  institutionTypeCreatedResponse:
+    type: object
+    properties:
+      msg:
+        type: string
+        example: "[College, Class] Created Successfully"
+      new_id:
+        type: integer
+        example: 842
+
+  institutionCreatedResponse:
+    type: string
+    example: "Institution Created Successfully"
+
+  newInstitutionPayload:
+    type: object
+    properties:
+      status:
+        type: string
+        example: "1"
+      business_type:
+        type: string
+        example: "1"
+      grace_period:
+        type: string
+        example: "90"
+      name:
+        type: string
+        example: "new institution"
+
+  labListResponse:
+    type: array
+    items:
+      $ref: '#/definitions/labItemData'
+
+  labItemData:
+    type: object
+    properties:
+      code:
+        type: string
+      homework:
+        type: string
+      homeworks:
+        $ref: '#/definitions/homeworkItemData'
+      introduction:
+        $ref: '#/definitions/introductionItemData'
+      lesson_content:
+        type: array
+        items:
+          type: string
+      modules:
+        type: array
+        items:
+          type: string
+      sequence:
+        type: integer
+      status:
+        type: integer
+      status_mode:
+        type: integer
+      summary:
+        $ref: '#/definitions/summaryItemData'
+      syllabus_id:
+        type: integer
+      console:
+        type: string
+      created_at:
+        type: string
+      created_by:
+        type: integer
+      description:
+        type: string
+      id:
+        type: string
+      layout_type:
+        type: string
+      mutable_tasks:
+        type: integer
+      name:
+        type: string
+      run_button:
+        type: integer
+      tasks_count:
+        type: integer
+      updated_at:
+        type: string
+      version:
+        type: string
+
+  lessonListResponse:
+    type: array
+    items:
+      $ref: '#/definitions/lessonItemDataResponse'
+
+  lessonItemDataResponse:
+    type: object
+    properties:
+      code:
+        type: string
+      created_at:
+        type: string
+      created_by:
+        type: string
+      description:
+        type: string
+      homework:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      sequence:
+        type: integer
+      status:
+        type: integer
+      syllabus_id:
+        type: integer
+      updated_at:
+        type: string
+      updated_by:
+        type: string
+      version:
+        type: string
+      status_mode:
+        type: integer
+      module_name:
+        type: string
+        example: null
+      topic_name:
+        type: string
+      homeworks:
+        $ref: '#/definitions/homeworkItemData'
+      modules:
+        type: array
+        items:
+          $ref: '#/definitions/moduleItemData'
+      introduction:
+        $ref: '#/definitions/introductionItemData'
+      summary:
+        $ref: '#/definitions/summaryItemData'
+      lesson_content:
+        type: array
+        items:
+          $ref: '#/definitions/lessonResponseItemData'
+      topics:
+        type: array
+        items:
+          $ref: '#/definitions/topicItemDataRequest'
+
+  lessonResponseItemData:
+    type: object
+    properties:
+      content_id:
+        type: string
+      content_type_name:
+        type: string
+      order:
+        type: integer
+        example: 1
+
+  lessonItemDataRequest:
+    type: object
+    properties:
+      code:
+        type: string
+      created_at:
+        type: string
+      created_by:
+        type: string
+      description:
+        type: string
+      homework:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      sequence:
+        type: integer
+      status:
+        type: integer
+      syllabus_id:
+        type: integer
+      updated_at:
+        type: string
+      updated_by:
+        type: string
+      version:
+        type: string
+      status_mode:
+        type: integer
+      homeworks:
+        $ref: '#/definitions/homeworkItemData'
+      modules:
+        type: array
+        items:
+          $ref: '#/definitions/moduleItemDataRequest'
+      introduction:
+        type: array
+        items:
+          type: string
+      summary:
+        type: array
+        items:
+          $ref: '#/definitions/lessonSummaryData'
+      lesson_content:
+        type: object
+        allOf:
+          - $ref: '#/definitions/lessonItemData'
+          - $ref: '#/definitions/lessonItemDataWithString'
+      topics:
+        type: array
+        items:
+          $ref: '#/definitions/topicItemDataRequest'
+      uuid:
+        type: string
+        example: "230f67a7-47de-4c86-aacb-b64ad10e8c76"
+      summaryKeyTakeAway:
+        type: string
+        example: ""
+
+  moduleItemDataRequest:
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      syllabus_id:
+        type: integer
+
+  lessonSummaryData:
+    type: object
+    properties:
+      content_id:
+        type: integer
+      content_type:
+        type: string
+      order:
+        type: integer
+
+  lessonItemData:
+    type: object
+    properties:
+      content_id:
+        type: integer
+      content_type_name:
+        type: string
+      name:
+        type: string
+
+  lessonItemDataWithString:
+    type: object
+    properties:
+      content_id:
+        type: string
+      content_type_name:
+        type: string
+      name:
+        type: string
+
+  summaryItemData:
+    type: object
+    properties:
+      keyTakeAway:
+        type: array
+        items:
+          type: object
+          properties:
+            content:
+              type: string
+            id:
+              type: integer
+            key_take_away_read:
+              type: integer
+            name:
+              type: string
+            order:
+              type: integer
+            status:
+              type: integer
+            type:
+              type: string
+      presentations:
+        type: array
+        items:
+          type: string
+      quizzes:
+        type: array
+        items:
+          type: string
+      terms:
+        type: array
+        items:
+          type: object
+          example: []
+      videos:
+        type: array
+        items:
+          type: string
+
+  introductionItemData:
+    type: object
+    properties:
+      presentations:
+        $ref: '#/definitions/presentationsListResponse'
+      videos:
+        $ref: '#/definitions/videoListResponse'
+
+  topicItemDataRequest:
+    type: object
+    properties:
+      assets:
+        type: array
+        items:
+          $ref: '#/definitions/assetItemData'
+          # type: string
+      id:
+        type: string
+      lesson_id:
+        type: string
+      created_at:
+        type: string
+      updated_at:
+        type: string
+      created_by:
+        type: integer
+      total_tasks:
+        type: integer
+      finished_tasks:
+        type: integer
+      status:
+        type: integer
+      topic_assets:
+        type: array
+        items:
+          $ref: '#/definitions/assetItemData'
+      name:
+        type: string
+      order:
+        type: integer
+
+  assetItemData:
+    type: object
+    properties:
+      topic_id:
+        type: string
+        example: "035474a6-f865-46f6-9490-2232b5f198ea"
+      content_type_id:
+        type: integer
+        example: 13
+      content_id:
+        type: string
+        example: "cc0e0a38-23b0-430b-ac58-8f20c89bdc07"
+      order:
+        type: integer
+        example: 1
+      created_at:
+        type: string
+        example: "2022-02-07 08:21:15"
+      created_by:
+        type: integer
+        example: 98
+      meta_data:
+        $ref: '#/definitions/metaData'
+      name:
+        type: string
+        example: "Attack & Mitigation Concepts"
+      content_type_name:
+        type: string
+        example: "lab"
+
+  metaData:
+    type: object
+    properties:
+      id:
+        type: string
+        example: "cc0e0a38-23b0-430b-ac58-8f20c89bdc07"
+      name:
+        type: string
+        example: "Attack & Mitigation Concepts"
+      description:
+        type: string
+        example: "In this practice, you are required to mitigate vulnerabilities..."
+      layout_type:
+        type: string
+        example: "single-block"
+      console:
+        type: integer
+        example: 1
+      run_button:
+        type: integer
+        example: 0
+      mutable_tasks:
+        type: integer
+        example: 0
+      version:
+        type: string
+        example: "v1.1.0.4"
+      provider:
+        type: string
+        example: "crang"
+      content_install_type:
+        type: string
+        example: "ecsEC2"
+      walkthrough:
+        type: string
+        example: null
+      status:
+        type: integer
+        example: 0
+      creator:
+        $ref: '#/definitions/creator'
+      estimated_loading_time:
+        type: integer
+        example: 70
+      created_at:
+        type: string
+        example: "2022-01-31 10:00:55"
+      updated_at:
+        type: string
+        example: "2022-02-07 09:35:17"
+      created_by:
+        type: integer
+        example: 98
+      updated_by:
+        type: integer
+        example: 98
+      tasks:
+        type: array
+        items:
+          $ref: '#/definitions/taskItemData'
+      updater:
+        $ref: '#/definitions/creator'
+
+  taskItemData:
+    type: object
+    properties:
+      content_id:
+        type: string
+      content_type_id:
+        type: integer
+      id:
+        type: string
+        example: "ab91d0f0-742b-4d6d-96bf-9d49471d3bb7"
+      lab_id:
+        type: string
+        example: "cc0e0a38-23b0-430b-ac58-8f20c89bdc07"
+      content:
+        type: string
+        example: "Prevent attackers..."
+      explanation:
+        type: string
+        example: "The `ScanningPrevention`..."
+      solution:
+        type: string
+        example: "Execute `ScanningPrevention`..."
+      type:
+        type: integer
+        example: 1
+      status:
+        type: integer
+        example: 0
+      order:
+        type: integer
+        example: 1
+      created_at:
+        type: string
+        example: "2022-01-31 10:00:55"
+      updated_at:
+        type: string
+        example: "2022-01-31 10:00:55"
+      created_by:
+        type: integer
+        example: 98
+      progress:
+        type: string
+        example: null
+      full_hints:
+        type: array
+        items:
+          type: string
+      homework:
+        type: object
+        properties:
+          lab_task_id:
+            type: string
+            example: "efb54d7e-7f13-4d9e-bb47-40fe74f523e4"
+      flag:
+        type: object
+        properties:
+          task_id:
+            type: string
+          placeholder:
+            type: string
+          solution:
+            type: string
+
+  moduleListResponse:
+    type: array
+    items:
+      $ref: '#/definitions/moduleItemData'
+
+  homeworkItemData:
+    type: object
+    properties:
+      is_finished:
+        type: integer
+        example: 0
+      user_bookmark:
+        type: object
+
+  moduleItemData:
+    type: object
+    properties:
+      assigned_lessons:
+        type: integer
+      classification:
+        type: integer
+      created_at:
+        type: string
+      created_by:
+        type: integer
+      description:
+        type: string
+      icon:
+        type: string
+      id:
+        type: string
+      level:
+        type: integer
+      name:
+        type: string
+      order:
+        type: integer
+      slug:
+        type: string
+      status:
+        type: integer
+      syllabi:
+        type: array
+        items:
+          type: string
+      syllabus_id:
+        type: integer
+      updated_at:
+        type: string
+      updated_by:
+        type: integer
+      status_mode:
+        type: string
+
+  presentationsListResponse:
+    type: array
+    items:
+      $ref: '#/definitions/presentationItemData'
+
+  presentationItemData:
+    type: object
+    properties:
+      content_id:
+        type: string
+        example: "03781cc3-d3c9-4d0e-a107-e409af94bbed"
+      content_type_id:
+        type: integer
+        example: 12
+      content_type:
+        type: string
+      order:
+        type: integer
+        example: 3
+      user_bookmark:
+        type: object
+      created_at:
+        type: string
+      created_by:
+        type: string
+      description:
+        type: string
+      file_link:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      preview_image:
+        type: string
+      status:
+        type: integer
+      updated_at:
+        type: string
+      type:
+        type: integer
+        example: 1
+      presentation_type_name:
+        type: string
+        example: Presentation
+      pdf_to_slider:
+        type: string
+        example: "0"
+
+  videoListResponse:
+    type: array
+    items:
+      $ref: '#/definitions/videoItemData'
+
+  skillListResponse:
+    type: array
+    items:
+      $ref: '#/definitions/skillItemData'
+
+  skillItemData:
+    type: object
+    properties:
+      created_at:
+        type: string
+      created_by:
+        type: integer
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      status:
+        type: integer
+      tag_type_id:
+        type: integer
+      updated_at:
+        type: string
+      updated_by:
+        type: integer
+
+  skillListResponseWithUUID:
+    type: array
+    items:
+      $ref: '#/definitions/skillItemDataWithUUID'
+
+  skillItemDataWithUUID:
+    type: object
+    properties:
+      id:
+        type: string
+        example: "8d12c713-e0ef-4bcf-8913-6d39b833a38f"
+      name:
+        type: string
+      path:
+        type: string
+      default:
+        type: integer
+      created_at:
+        type: string
+      updated_at:
+        type: string
+      s3_image:
+        type: string
+
+  videoItemData:
+    type: object
+    properties:
+      content_id:
+        type: string
+        example: "03781cc3-d3c9-4d0e-a107-e409af94bbed"
+      content_type_id:
+        type: integer
+        example: 12
+      content_type:
+        type: string
+      order:
+        type: integer
+        example: 3
+      content_type_name:
+        type: string
+        example: "quiz"
+      display_name:
+        type: string
+      duration:
+        type: integer
+      updated_at:
+        type: string
+      video_id:
+        type: string
+      name:
+        type: string
+
+  deleteUserBody:
+    type: object
+    properties:
+      mode:
+        type: string
+      data:
+        type: array
+        items:
+          type: integer
+          example: 11778
+
+  term:
+    type: object
+    properties:
+      id:
+        type: integer
+      category_id:
+        type: integer
+      name:
+        type: string
+      content:
+        type: string
+      image:
+        type: string
+      link:
+        type: string
+      status:
+        type: integer
+      created_at:
+        type: string
+      updated_at:
+        type: string
+      created_by:
+        type: integer
+      updated_by:
+        type: integer
+
+  popularQuizResponse:
+    type: array
+    items:
+      $ref: '#/definitions/quizDataResponse'
+
+  correctAnswers:
+    type: object
+    properties:
+      id:
+        type: integer
+      user_id:
+        type: integer
+      quiz_id:
+        type: integer
+      status:
+        type: integer
+      plays:
+        type: integer
+      highest_score:
+        type: integer
+        example: 10
+      created_at:
+        type: string
+      updated_at:
+        type: string
+      finished_at:
+        type: string
+      correct_questions_count:
+        type: integer
+
+  question:
+    type: object
+    properties:
+      id:
+        type: integer
+      content:
+        type: string
+      status:
+        type: integer
+      order_in_quiz:
+        type: integer
+      level:
+        type: string
+      quiz_id:
+        type: integer
+      currect_answer_id:
+        type: integer
+      updated_at:
+        type: string
+      created_at:
+        type: string
+      answers:
+        type: array
+        items:
+          $ref: '#/definitions/answer'
+
+  answer:
+    type: object
+    properties:
+      id:
+        type: integer
+      content:
+        type: string
+      question_id:
+        type: integer
+      status:
+        type: integer
+      order_in_question:
+        type: integer
+      updated_at:
+        type: string
+      created_at:
+        type: string
+
+  category:
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      description:
+        type: string
+      image:
+        type: string
+      status:
+        type: integer
+      created_at:
+        type: string
+      updated_at:
+        type: string
+      created_by:
+        type: integer
+      updated_by:
+        type: string
+      status_mode:
+        type: integer
+        example: 1
+
+  refreshUserTokenResponse:
+    type: object
+    properties:
+      token:
+        type: string
+        example: "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiI..."
+      name:
+        type: string
+      role:
+        type: string
+      time:
+        type: string
+      url:
+        type: string
+
+  userEditData:
+    type: object
+    properties:
+      name:
+        type: string
+      email:
+        type: string
+      phone:
+        type: string
+
+  profileEditResponseBody:
+    type: object
+    properties:
+      name:
+        type: string
+      email:
+        type: string
+      phone:
+        type: string
+      image:
+        type: string
+      deatils:
+        $ref: '#/definitions/details'
+      avatars:
+        type: array
+        items:
+          $ref: '#/definitions/avatars'
+
+  avatars:
+    type: object
+    properties:
+      id:
+        type: integer
+      image:
+        type: string
+      level:
+        type: integer
+
+  profileResponseBody:
+    type: object
+    properties:
+      id:
+        type: integer
+      subscription_id:
+        type: integer
+      customer_id:
+        type: integer
+      name:
+        type: string
+      phone:
+        type: string
+      email:
+        type: string
+      email_verified_at:
+        type: string
+      image:
+        type: string
+      status:
+        type: integer
+      created_at:
+        type: string
+        format: date-time
+      updated_at:
+        type: string
+        format: date-time
+      created_by:
+        type: string
+      updated_by:
+        type: string
+      owner:
+        type: string
+      played_count:
+        type: integer
+      hints_count:
+        type: integer
+      finished_categories:
+        type: integer
+      finished_challenges:
+        type: integer
+      games:
+        type: integer
+      need_eula:
+        type: boolean
+      details:
+        $ref: '#/definitions/details'
+      allow_maintenance_user:
+        type: boolean
+      levels:
+        type: array
+        items:
+          $ref: '#/definitions/levels'
+      institution:
+        $ref: '#/definitions/institution'
+      pa_details:
+        $ref: '#/definitions/paDetails'
+      finished:
+        $ref: '#/definitions/finished'
+
+  finished:
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        challenge_id:
+          type: string
+        points:
+          type: integer
+        status:
+          type: integer
+        attempts:
+          type: integer
+        locked:
+          type: integer
+        created_at:
+          type: string
+          # format: date-time
+        updated_at:
+          type: string
+          # format: date-time
+        name:
+          type: string
+
+  paDetails:
+    type: object
+    properties:
+      lessons:
+        type: string
+        example: []
+      count:
+        type: integer
+      total_tasks:
+        type: integer
+
+  details:
+    type: object
+    properties:
+      points:
+        type: integer
+      level:
+        $ref: '#/definitions/levels'
+      account_delete_status:
+        type: integer
+
+  supportBody:
+    type: object
+    properties:
+      category:
+        type: integer
+        example: 1
+      content:
+        type: string
+        example: "blah blah"
+
+  institution:
+    type: object
+    properties:
+      user_id:
+        type: integer
+      institution:
+        type: string
+
+  levels:
+    type: object
+    properties:
+      level:
+        type: integer
+      points:
+        type: integer
+      next_level:
+        type: integer
+
+  supportResponse:
+    type: "array"
+    items:
+      $ref: '#/definitions/supportItem'
+
+  supportItem:
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+
+  forgotPasswordPayload:
+    type: object
+    properties:
+      email:
+        type: string
+        example: "mail@mail.com"
+
+  cywappResponse:
+    type: object
+    properties:
+      main:
+        type: string
+      version:
+        type: string
+
+  signUpBodyRequest:
+    type: object
+    properties:
+      name:
+        type: string
+        example: "user name"
+      email:
+        type: string
+        example: "username@mail.com"
+      class:
+        type: string
+        example: "galex"
+      password:
+        type: string
+        example: "password"
+      password_confirmation:
+        type: string
+        example: "password"
+      grant_type:
+        type: string
+        example: "password"
+      phone:
+        type: string
+        example: "1234567785"
+      checkbox:
+        type: string
+        example: "value"
+
+  loginBody:
+    type: object
+    properties:
+      password:
+        type: string
+        format: password
+      email:
+        type: string
+        format: email
+      captcha:
+        type: string
+      captcha_show:
+        type: boolean
+        example: false
+      remember:
+        type: boolean
+        example: false
+
+  loginResponse:
+    type: object
+    properties:
+      status:
+        type: string
+        example: "success"
+      message:
+        type: string
+      data:
+        $ref: '#/definitions/dataLoginResponse'
+      code:
+        type: string
+        example: "200"
+
+  dataLoginResponse:
+    type: object
+    properties:
+      token:
+        type: string
+        example: "eyJoYXNoI..."
+      name:
+        type: string
+        example: "Admin"
+      role:
+        type: string
+        example: "admin"
+      time:
+        type: integer
+        example: 14400
+      url:
+        type: string
+        example: null
+
+  newUserPayload:
+    type: object
+    properties:
+      status:
+        type: boolean
+      role:
+        type: integer
+        format: int32
+        example: 134
+      name:
+        type: string
+        example: "some user"
+      dial_code:
+        type: string
+        example: "+1"
+      country_id:
+        type: integer
+        example: 231
+      email:
+        type: string
+        example: "someuser@mail.com"
+      phone:
+        type: string
+        example: "05044444444"
+      password:
+        type: string
+        example: "1Qaz2wsx3edc"
+      password_confirmation:
+        type: string
+        example: "1Qaz2wsx3edc"
+      institution:
+        type: integer
+        example: 20
+      colleges:
+        $ref: '#/definitions/userCollegesRequest'
+      classes:
+        $ref: '#/definitions/userClassesRequest'
+
+  userCreatedResponse:
+    type: string
+    example: "User Created Successfully"
+
+  getTableInstitutionsResponse:
+    type: object
+    properties:
+      current_page:
+        type: integer
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/dataInstitutions'
+      first_page_url:
+        type: string
+        example: "https://automation.cywar.hackeru.com/api/cms/users/1/10?page=1"
+      from:
+        type: integer
+      last_page:
+        type: integer
+      last_page_url:
+        type: string
+      links:
+        type: array
+        items:
+          $ref: '#/definitions/links'
+      next_page_url:
+        type: string
+      path:
+        type: string
+      per_page:
+        type: integer
+      prev_page_url:
+        type: string
+      to:
+        type: integer
+      total:
+        type: integer
+
+  links:
+    type: object
+    properties:
+      url:
+        type: string
+      label:
+        type: string
+      active:
+        type: boolean
+
+  getTableWithUUIDResponse:
+    type: object
+    properties:
+      current_page:
+        type: integer
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/dataWithUUID'
+      first_page_url:
+        type: string
+        example: "https://automation.cywar.hackeru.com/api/cms/users/1/10?page=1"
+      from:
+        type: integer
+      last_page:
+        type: integer
+      links:
+        type: array
+        items:
+          $ref: '#/definitions/links'
+      last_page_url:
+        type: string
+      next_page_url:
+        type: string
+      path:
+        type: string
+      per_page:
+        type: integer
+      prev_page_url:
+        type: string
+      to:
+        type: integer
+      total:
+        type: integer
+
+  getTableClassResponse:
+    type: object
+    properties:
+      current_page:
+        type: integer
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/dataClass'
+      first_page_url:
+        type: string
+        example: "https://automation.cywar.hackeru.com/api/cms/users/1/10?page=1"
+      from:
+        type: integer
+      last_page:
+        type: integer
+      last_page_url:
+        type: string
+      next_page_url:
+        type: string
+      path:
+        type: string
+      per_page:
+        type: integer
+      prev_page_url:
+        type: string
+      to:
+        type: integer
+      total:
+        type: integer
+
+  getTableResponse:
+    type: object
+    properties:
+      current_page:
+        type: integer
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/data'
+      first_page_url:
+        type: string
+        example: "https://automation.cywar.hackeru.com/api/cms/users/1/10?page=1"
+      from:
+        type: integer
+      last_page:
+        type: integer
+      last_page_url:
+        type: string
+      next_page_url:
+        type: string
+      path:
+        type: string
+      per_page:
+        type: integer
+      prev_page_url:
+        type: string
+      to:
+        type: integer
+      total:
+        type: integer
+
+  getTableResponseUser:
+    type: object
+    properties:
+      current_page:
+        type: integer
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/dataUsers'
+      first_page_url:
+        type: string
+        example: "https://automation.cywar.hackeru.com/api/cms/users/1/10?page=1"
+      from:
+        type: integer
+      last_page:
+        type: integer
+      last_page_url:
+        type: string
+      next_page_url:
+        type: string
+      path:
+        type: string
+      per_page:
+        type: integer
+      prev_page_url:
+        type: string
+      to:
+        type: integer
+      total:
+        type: integer
+
+  getQuizTableResponse:
+    type: object
+    properties:
+      current_page:
+        type: integer
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/quizDataResponse'
+      first_page_url:
+        type: string
+        example: "https://automation.cywar.hackeru.com/api/cms/users/1/10?page=1"
+      from:
+        type: integer
+      last_page:
+        type: integer
+      last_page_url:
+        type: string
+      next_page_url:
+        type: string
+      path:
+        type: string
+      per_page:
+        type: integer
+      prev_page_url:
+        type: string
+      to:
+        type: integer
+      total:
+        type: integer
+
+  dataWithUUID:
+    type: object
+    properties:
+      s3_image:
+        type: string
+      comments:
+        type: string
+      content_install_type:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      image:
+        type: string
+      status:
+        type: integer
+      created_at:
+        type: string
+        # format: date
+      orderby:
+        type: string
+        example: null
+      updated_at:
+        type: string
+      created_by:
+        type: integer
+      status_mode:
+        type: integer
+      terms_count:
+        type: integer
+      updated_by:
+        type: integer
+      description:
+        type: string
+      slug:
+        type: string
+      category:
+        type: string
+      challenge_slug:
+        type: string
+      level:
+        type: string
+      points:
+        type: integer
+      rank:
+        type: number
+        format: double
+      votes:
+        type: integer
+      version:
+        type: string
+        example: "v2.1.1.1"
+      number_of_associated_certifications:
+        type: integer
+        example: 0
+      creator:
+        $ref: '#/definitions/creator'
+
+  creator:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+
+  dataClass:
+    type: object
+    properties:
+      college:
+        type: string
+      end_at:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      notes:
+        type: string
+      start_at:
+        type: string
+      status:
+        type: integer
+      students:
+        type: integer
+      type:
+        type: integer
+      vc_status:
+        type: string
+
+  dataUsers:
+    type: object
+    properties:
+      total_points:
+        type: integer
+      id:
+        type: integer
+        example: 1
+      subscription_id:
+        type: integer
+      customer_id:
+        type: string
+        example: null
+      name:
+        type: string
+      nick_name:
+        type: string
+        example: null
+      phone:
+        type: string
+      country_id:
+        type: integer
+        example: null
+      email:
+        type: string
+      email_verified_at:
+        type: string
+      image:
+        type: string
+      status:
+        type: integer
+      identity_provider_type_id:
+        type: integer
+      identity_provider_user_id:
+        type: string
+        example: "87ce4c91-9aa3-429d-91a5-1d73b7d919b0"
+      is_migrated:
+        type: number
+      access_period_over:
+        type: integer
+      created_at:
+        type: string
+      updated_at:
+        type: string
+      created_by:
+        type: integer
+      updated_by:
+        type: integer
+      owner:
+        type: string
+      cognito_migrate:
+        type: integer
+        example: 0
+      timezone_name:
+        type: string
+        example: "UTC"
+      is_first_login:
+        type: number
+        example: 0
+      institution:
+        type: string
+        example: "Auto_insti_95734400"
+      college:
+        type: string
+        example: "Auto_college_95721500"
+      class:
+        type: string
+        example: "Auto_class_95732800"
+      role:
+        type: string
+        example: "teacher"
+
+  data:
+    type: object
+    properties:
+      s3_image:
+        type: string
+      comments:
+        type: string
+      version:
+        type: string
+      content_install_type:
+        type: string
+      rank:
+        type: string
+      votes:
+        type: string
+      colleges_count:
+        type: integer
+      classes_count:
+        type: integer
+      college_type_id:
+        type: integer
+      college:
+        type: string
+      college_id:
+        type: integer
+      end_at:
+        type: string
+      start_at:
+        type: string
+      notes:
+        type: string
+      id:
+        type: integer
+      subscription_id:
+        type: integer
+      customer_id:
+        type: integer
+      name:
+        type: string
+      phone:
+        type: string
+      email:
+        type: string
+      email_verified_at:
+        type: string
+      image:
+        type: string
+      status:
+        type: integer
+      google2fa_secret:
+        type: string
+      qrcode:
+        type: string
+      active_2fa:
+        type: integer
+      created_at:
+        type: string
+        # format: date
+      updated_at:
+        type: string
+        # format: date
+      created_by:
+        type: integer
+      updated_by:
+        type: integer
+      owner:
+        type: string
+      role:
+        type: string
+      description:
+        type: string
+      orderby:
+        type: string
+      slug:
+        type: string
+      category:
+        type: string
+      challenge_slug:
+        type: string
+      level:
+        type: string
+      points:
+        type: integer
+      icon:
+        type: string
+      template_id:
+        type: string
+      type:
+        type: integer
+      vc_status:
+        type: integer
+      virtual_class_id:
+        type: string
+      institution:
+        $ref: '#/definitions/intitutionItemData'
+      institution_id:
+        type: integer
+      classes:
+        type: array
+        items:
+          type: object
+          properties:
+            institution_id:
+              type: integer
+      students:
+        type: array
+        items:
+          $ref: '#/definitions/studentItemData'
+
+  dataInstitutions:
+    type: object
+    properties:
+      classes:
+        type: array
+        items:
+          type: object
+          properties:
+            institution_id:
+              type: integer
+      colleges_count:
+        type: integer
+      created_at:
+        type: string
+      updated_at:
+        type: string
+      created_by:
+        type: integer
+      updated_by:
+        type: integer
+      icon:
+        type: string
+      id:
+        type: integer
+      image:
+        type: string
+      institution:
+        type: string
+      business_type:
+        type: integer
+      grace_period:
+        type: integer
+      status:
+        type: integer
+      students:
+        type: array
+        items:
+          $ref: '#/definitions/studentItemData'
+
+  intitutionItemData:
+    type: object
+    properties:
+      id:
+        type: integer
+      institution:
+        type: string
+
+  studentItemData:
+    type: object
+    properties:
+      active_2fa:
+        type: integer
+      institution_id:
+        type: integer
+      class_id:
+        type: integer
+      college_id:
+        type: integer
+      created_at:
+        type: string
+      customer_id:
+        type: integer
+      email:
+        type: string
+      email_verifeid_at:
+        type: string
+      end_at:
+        type: string
+      eula_signature_date:
+        type: string
+      google2fa_secret:
+        type: string
+      id:
+        type: integer
+      image:
+        type: string
+      name:
+        type: string
+      notes:
+        type: string
+      owner:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+      qrcode:
+        type: string
+      role:
+        type: string
+      role_id:
+        type: integer
+      user_roles_id:
+        type: integer
+      started_at:
+        type: string
+      status:
+        type: integer
+      subscription_id:
+        type: integer
+      template_id:
+        type: string
+      type:
+        type: integer
+      updated_at:
+        type: string
+      user_id:
+        type: integer
+      vc_status:
+        type: integer
+      virtual_class_id:
+        type: string

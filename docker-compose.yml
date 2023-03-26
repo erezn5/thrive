@@ -1,0 +1,16 @@
+version: '3'
+services:
+  cywar-test-automation:
+    image: markhobson/maven-chrome:jdk-11
+    stop_signal: SIGKILL
+    stdin_open: true
+    tty: true
+    privileged: true
+    shm_size: 8g
+    user: root
+    working_dir: /opt/neo
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./:/opt/neo
+      - /dev/shm:/dev/shm
+    command: "mvn clean test -Pregression"
